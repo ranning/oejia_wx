@@ -34,6 +34,8 @@
              'views/wx_approval_record_views.xml',
 
              'views/res_partner_views.xml',
+
+             'views/user_loc_views.xml'
              ],
     'qweb': [
     ],

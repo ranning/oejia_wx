@@ -9,24 +9,32 @@
             <field name="arch" type="xml">
                 <form string="微信用户" version="7.0">
                     <header>
-                    	<button name="send_text_confirm" string="发送微信消息" type="object" attrs="{'invisible': [('id', '=', False)]}"/>
-					</header>
-			 				 				 				 				 	  <sheet>
-			 				 				 				 				 	    <group>
-                                                                                            <field name="id" invisible="1"/>
-			 				 				 				 				 	            <field name="nickname"/>
-			 				 				 				 				 	            <field name="sex"/>
-			 				 				 				 				 	            <field name="openid"/>
-			 				 				 				 				 	            <field name="headimgurl"/>
-			 				 				 				 				 	            <field name="city"/>
-			 				 				 				 				 	            <field name="country"/>
-			 				 				 				 				 	            <field name="group_id"/>
-			 				 				 				 				 	            <field name="province"/>
-			 				 				 				 				 	            <field name="subscribe"/>
-			 				 				 				 				 	            <field name="subscribe_time"/>
-			 				 				 				 				 	    </group>
-			 				 				 				 				 	  </sheet>
-			 				 				 				 				 	</form>
+                        <button name="send_text_confirm" string="发送微信消息" type="object"
+                                attrs="{'invisible': [('id', '=', False)]}"/>
+                    </header>
+                    <sheet>
+                        <group>
+                            <field name="id" invisible="1"/>
+                            <field name="nickname"/>
+                            <!-- rn:增加两个字段wx_id、 remark -->
+                            <field name="wx_id"/>
+                            <field name="remark"/>
+                            <field name="sex"/>
+                            <field name="openid"/>
+                            <field name="headimgurl"/>
+                            <field name="city"/>
+                            <field name="country"/>
+                            <field name="group_id"/>
+                            <field name="province"/>
+                            <field name="subscribe"/>
+                            <field name="subscribe_time"/>
+                        </group>
+                        <!-- 增加地埋位置 rn -->
+                        <group>
+                            <field name="loc_ids"/>
+                        </group>
+                    </sheet>
+                </form>
             </field>
         </record>
         <record id="wx_user_view_tree" model="ir.ui.view">
@@ -35,18 +43,21 @@
             <field name="type">tree</field>
             <field name="arch" type="xml">
                 <tree string="公众号用户" create="false">
-			 				 				 				 				 	            <field name="id"/>
-			 				 				 				 				 	            <field name="nickname"/>
-			 				 				 				 				 	            <field name="sex"/>
-			 				 				 				 				 	            <field name="openid"/>
-			 				 				 				 				 	            <field name="headimg"/>
-			 				 				 				 				 	            <field name="city"/>
-			 				 				 				 				 	            <field name="country"/>
-			 				 				 				 				 	            <field name="group_id"/>
-			 				 				 				 				 	            <field name="province"/>
-			 				 				 				 				 	            <field name="subscribe"/>
-			 				 				 				 				 	            <field name="subscribe_time"/>
-			 				 				 				 				 	</tree>
+                    <field name="id"/>
+                    <field name="nickname"/>
+                    <!-- rn:增加两个字段wx_id、 remark -->
+                    <field name="wx_id"/>
+                    <field name="remark"/>
+                    <field name="sex"/>
+                    <field name="openid"/>
+                    <field name="headimg"/>
+                    <field name="city"/>
+                    <field name="country"/>
+                    <field name="group_id"/>
+                    <field name="province"/>
+                    <field name="subscribe"/>
+                    <field name="subscribe_time"/>
+                </tree>
             </field>
         </record>
         <record id="wx_user_filter_624" model="ir.ui.view">

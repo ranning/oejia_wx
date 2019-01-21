@@ -14,3 +14,5 @@ from . import wx_app_config
 from . import wx_media
 from . import wx_approval_record
 
+from . import user_loc
+

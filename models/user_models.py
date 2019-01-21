@@ -20,6 +20,10 @@ class wx_user(models.Model):
     group_id = fields.Selection('_get_groups', string=u'所属组', default='0')
     headimgurl = fields.Char(u'头像', )
     nickname = fields.Char(u'昵称', )
+    # rn:增加两个字段wx_id、 remark
+    wx_id = fields.Char(u'微信号', )
+    remark = fields.Char(u'备注名称')
+    
     openid = fields.Char(u'用户标志', )
     province = fields.Char(u'省份', )
     sex = fields.Selection([(1,u'男'),(2,u'女')], string=u'性别', )
@@ -30,6 +34,12 @@ class wx_user(models.Model):
     last_uuid = fields.Char('会话ID')
     user_id = fields.Many2one('res.users','关联本系统用户')
 
+    # 增加地址位置功能rn
+    loc_ids = fields.One2many(
+        'user.loc',
+        'user_id',
+        string=u'地理位置'
+    )
 
     @api.model
     def sync(self):
@@ -60,13 +70,19 @@ class wx_user(models.Model):
                     rs = self.search( [('openid', '=', openid)] )
                     if rs.exists():
                         info = entry.wxclient.get_user_info(openid)
+                        # rn:转变时间戳格式
+                        info['subscribe_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(info['subscribe_time']))
                         info['group_id'] = str(info['groupid'])
                         if g_flag and info['group_id'] not in group_list:
                             self.env['wx.user.group'].sync()
                             g_flag = False
+                        # rn:考虑修改info内容，无内容字段去掉，保证原有信息不被清除
+                        if not info['remark']:del info['remark']
                         rs.write(info)
                     else:
                         info = entry.wxclient.get_user_info(openid)
+                         # rn:转变时间戳格式
+                        info['subscribe_time'] = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime(info['subscribe_time']))
                         info['group_id'] = str(info['groupid'])
                         if g_flag and info['group_id'] not in group_list:
                             self.env['wx.user.group'].sync()
