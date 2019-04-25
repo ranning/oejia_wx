@@ -16,3 +16,4 @@ from . import wx_approval_record
 from . import wx_send_mass
 from . import wx_config
 
+from . import user_loc

@@ -37,6 +37,8 @@
              'views/wx_config_views.xml',
 
              'views/res_partner_views.xml',
+
+             'views/user_loc_view.xml'
              ],
     'qweb': [
     ],

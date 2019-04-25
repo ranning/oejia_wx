@@ -16,6 +16,10 @@
 			 				 				 				 				 	    <group>
                                                                                             <field name="id" invisible="1"/>
 			 				 				 				 				 	            <field name="nickname"/>
+                                                                                             <!-- rn:增加两个字段wx_id、 remark -->
+                            <field name="wx_id"/>
+                            <field name="remark"/>
+
 			 				 				 				 				 	            <field name="sex"/>
 			 				 				 				 				 	            <field name="openid"/>
 			 				 				 				 				 	            <field name="headimgurl"/>
@@ -26,6 +30,10 @@
 			 				 				 				 				 	            <field name="subscribe"/>
 			 				 				 				 				 	            <field name="subscribe_time"/>
 			 				 				 				 				 	    </group>
+                                                                                    <!-- 增加地埋位置 rn -->
+                        <group>
+                            <field name="loc_ids"/>
+                        </group>
 			 				 				 				 				 	  </sheet>
 			 				 				 				 				 	</form>
             </field>
@@ -38,6 +46,9 @@
                 <tree string="公众号用户" create="false">
 			 				 				 				 				 	            <field name="id"/>
 			 				 				 				 				 	            <field name="nickname"/>
+                                                                                            <!-- rn:增加两个字段wx_id、 remark -->
+                    <field name="wx_id"/>
+                    <field name="remark"/>
 			 				 				 				 				 	            <field name="sex"/>
 			 				 				 				 				 	            <field name="openid"/>
 			 				 				 				 				 	            <field name="headimg"/>
