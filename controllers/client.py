@@ -1,12 +1,16 @@
 # coding=utf-8
 import logging
+import datetime
 
 from werobot.client import Client, ClientException
 from werobot.robot import BaseRoBot
 from werobot.session.memorystorage import MemoryStorage
 from werobot.logger import enable_pretty_logging
+from werobot.reply import create_reply
 
 from openerp import exceptions
+from odoo import fields
+from ..rpc.base import EntryBase
 
 _logger = logging.getLogger(__name__)
 
@@ -19,18 +23,15 @@ WeRoBot.message_types.append('file')
 
 WxEnvDict = {}
 
-class WxEntry(object):
+class WxEntry(EntryBase):
 
     def __init__(self):
 
         self.wxclient = Client('appid_xxxxxxxxxxxxxxx', 'appsecret_xxxxxxxxxxxxxx')
-
-        self.UUID_OPENID = {}
-
-        # 微信用户客服消息的会话缓存
-        self.OPENID_UUID = {}
-
         self.robot = None
+        self.subscribe_auto_msg = None
+
+        super(WxEntry, self).__init__()
 
     def send_text(self, openid, text):
         try:
@@ -39,7 +40,7 @@ class WxEntry(object):
             raise exceptions.UserError(u'发送失败 %s'%e)
 
     def chat_send(self, uuid, msg):
-        openid = self.UUID_OPENID.get(uuid,None)
+        openid = self.get_openid_from_uuid(uuid)
         if openid:
             self.send_text(openid, msg)
 
@@ -56,17 +57,25 @@ class WxEntry(object):
             raise exceptions.UserError(u'发送image失败 %s'%e)
 
     def send_image(self, uuid, media_id):
-        openid = self.UUID_OPENID.get(uuid, None)
+        openid = self.get_openid_from_uuid(uuid)
         if openid:
             self.send_image_message(openid, media_id)
 
     def send_voice(self, uuid, media_id):
-        openid = self.UUID_OPENID.get(uuid, None)
+        openid = self.get_openid_from_uuid(uuid)
         if openid:
             try:
                 self.wxclient.send_voice_message(openid, media_id)
             except ClientException as e:
                 raise exceptions.UserError(u'发送voice失败 %s'%e)
+
+    def create_reply(self, ret_msg, message):
+        if type(ret_msg)==dict:
+            if ret_msg.get('media_type')=='news':
+                self.wxclient.send_news_message(message.source, ret_msg['media_id'])
+            return None
+        else:
+            return create_reply(ret_msg, message=message)
 
     def init(self, env):
         dbname = env.cr.dbname
@@ -74,6 +83,15 @@ class WxEntry(object):
         if dbname in WxEnvDict:
             del WxEnvDict[dbname]
         WxEnvDict[dbname] = self
+
+        try:
+            config = env['wx.config'].sudo().get_cur()
+            action = config.action
+        except:
+            import traceback;traceback.print_exc()
+            action = None
+        if action:
+            self.subscribe_auto_msg = config.action.get_wx_reply()
 
         Param = env['ir.config_parameter'].sudo()
         self.wx_token = Param.get_param('wx_token') or ''
@@ -100,8 +118,8 @@ class WxEntry(object):
         try:
             users = env['wx.user'].sudo().search([('last_uuid','!=',None)])
             for obj in users:
-                self.OPENID_UUID[obj.openid] = obj.last_uuid
-                self.UUID_OPENID[obj.last_uuid] = obj.openid
+                if obj.last_uuid_time:
+                    self.recover_uuid(obj.openid, obj.last_uuid, fields.Datetime.from_string(obj.last_uuid_time))
         except:
             env.cr.rollback()
             import traceback;traceback.print_exc()

@@ -43,11 +43,11 @@ class WxCorpHandler(http.Controller):
 
         if request.httprequest.method == 'GET':
             try:
-                echo_str = self.crypto.check_signature(
-                    msg_signature,    #新增
+                echo_str = self.crypto.decrypt_message(
+                    {'Encrypt': echo_str},
+                    msg_signature,
                     timestamp,
-                    nonce,
-                    echo_str
+                    nonce
                 )
             except InvalidSignatureException:
                 abort(403)
@@ -65,10 +65,10 @@ class WxCorpHandler(http.Controller):
         except (InvalidSignatureException, InvalidCorpIdException):
             abort(403)
         msg = parse_message(msg)
-        ss = '>>> handle msg: %s %s'%(msg.type, msg)
+        ss = '>>> handle msg: %s %s %s'%(msg.type, msg.id, msg)
         _logger.info(ss)
         ret = ''
-        if msg.type in ['text', 'image', 'voice']:
+        if msg.type in ['text', 'image', 'voice', 'location']:
             #reply = create_reply(msg.content, msg).render()
             from .handlers.text_handler import kf_handler
             ret = kf_handler(request, msg)
