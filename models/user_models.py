@@ -1,6 +1,7 @@
 # coding=utf-8
 
 import logging
+import time
 
 from openerp import models, fields, api
 from ..controllers import client

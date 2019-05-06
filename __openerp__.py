@@ -38,7 +38,7 @@
 
              'views/res_partner_views.xml',
 
-             'views/user_loc_view.xml'
+             'views/user_loc_views.xml'
              ],
     'qweb': [
     ],
